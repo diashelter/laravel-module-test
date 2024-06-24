@@ -1,13 +1,13 @@
 <?php
 
-namespace Module\Order\Controllers;
+namespace Module\Order\Infra\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Module\Order\Application\UseCases\PlaceOrder;
-use Module\Order\Controllers\Requests\StoreOrderRequest;
-use Module\Order\Exceptions\OrderNotFoundException;
-use Module\Order\Models\Order;
+use Module\Order\Domain\Exceptions\OrderNotFoundException;
+use Module\Order\Infra\Controllers\Requests\StoreOrderRequest;
+use Module\Order\Infra\Models\Order;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,8 +16,8 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request, PlaceOrder $placeOrder): JsonResponse|JsonResource
     {
         try {
-            $orderDb = $placeOrder->execute($request->toConvertInputOrder());
-            return new OrderResource($orderDb);
+            $placeOrder->execute($request->toConvertInputOrder());
+            return new JsonResponse(null, Response::HTTP_CREATED);
         } catch (\Throwable $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

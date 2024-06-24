@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Order\Exceptions;
+namespace Module\Order\Domain\Exceptions;
 
 class OrderNotFoundException extends \Exception
 {

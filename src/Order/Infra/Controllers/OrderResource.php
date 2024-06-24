@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Module\Order\Controllers;
+namespace Module\Order\Infra\Controllers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
