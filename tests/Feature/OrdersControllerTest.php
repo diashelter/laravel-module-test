@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Module\Customer\Models\Customer;
-use Module\Order\Models\Order;
-use Module\Order\Models\OrderItem;
+use Module\Order\Infra\Models\Order;
+use Module\Order\Infra\Models\OrderItem;
 use Module\Product\Model\Product;
 use Tests\TestCase;
 
@@ -57,9 +57,11 @@ class OrdersControllerTest extends TestCase
                 ]
             ]
         ]);
-        $total = (1 * $product1->price_in_cents) + (2 * $product2->price_in_cents);
         $response->assertCreated();
-        $response->assertJsonPath('data.total', $total);
+        $total = (1 * $product1->price_in_cents) + (2 * $product2->price_in_cents);
+        $this->assertDatabaseHas('orders', [
+            'amount_in_cents' => $total,
+        ]);
     }
 
     public function testAllOrders()

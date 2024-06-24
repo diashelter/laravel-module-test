@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Order\Controllers\Requests;
+namespace Module\Order\Infra\Controllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Module\Order\Application\UseCases\InputItemOrder;
