@@ -57,7 +57,6 @@ class OrdersControllerTest extends TestCase
                 ]
             ]
         ]);
-
         $total = (1 * $product1->price_in_cents) + (2 * $product2->price_in_cents);
         $response->assertCreated();
         $response->assertJsonPath('data.total', $total);

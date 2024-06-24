@@ -2,7 +2,15 @@
 
 namespace Module\Order\Application\UseCases;
 
-class InputPlaceOrder
+readonly class InputPlaceOrder
 {
-
+    public function __construct(
+        public int   $customerId,
+        /**
+         * @var InputItemOrder[]
+         */
+        public array $items,
+    )
+    {
+    }
 }

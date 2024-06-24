@@ -4,38 +4,19 @@ namespace Module\Order\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
+use Module\Order\Application\UseCases\PlaceOrder;
 use Module\Order\Controllers\Requests\StoreOrderRequest;
 use Module\Order\Exceptions\OrderNotFoundException;
 use Module\Order\Models\Order;
-use Module\Order\Models\OrderItem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
-    public function store(StoreOrderRequest $request): JsonResponse|JsonResource
+    public function store(StoreOrderRequest $request, PlaceOrder $placeOrder): JsonResponse|JsonResource
     {
         try {
-            $orderDb = DB::transaction(function () use ($request) {
-                $total = array_reduce($request->validated('items'), function ($total, $item) {
-                    $total += $item['quantity'] * $item['price_in_cents'];
-                    return $total;
-                }, 0);
-                $orderDb = Order::create([
-                    'customer_id' => $request->validated('customer_id'),
-                    'amount_in_cents' => $total,
-                ]);
-                foreach ($request->validated('items') as $item) {
-                    OrderItem::create([
-                        'order_id' => $orderDb->id,
-                        'product_id' => $item['product_id'],
-                        'quantity' => $item['quantity'],
-                        'amount_in_cents' => $item['quantity'] * $item['price_in_cents'],
-                    ]);
-                }
-                return $orderDb;
-            });
+            $orderDb = $placeOrder->execute($request->toConvertInputOrder());
             return new OrderResource($orderDb);
         } catch (\Throwable $exception) {
             return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
